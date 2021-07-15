@@ -1,0 +1,101 @@
+
+CREATE DATABASE STU82534_Assignment;
+
+USE STU82534_Assignment;
+
+CREATE TABLE Customer
+(CustomerID INT NOT NULL PRIMARY KEY,
+FirstName VARCHAR(30) NOT NULL,
+LastName VARCHAR(30) NOT NULL,
+PhoneNumber INT NOT NULL,
+Address VARCHAR(60) NOT NULL,
+CONSTRAINT CustomerIsValid CHECK (CustomerID > 1000));
+
+CREATE TABLE Menu
+(MealID VARCHAR(4) NOT NULL PRIMARY KEY,
+MealName VARCHAR(30) NOT NULL,
+TypeOfCuisine VARCHAR(20) NOT NULL);
+
+CREATE TABLE Outlet
+(OutletID INT NOT NULL PRIMARY KEY,
+LocationType VARCHAR(20) NOT NULL,
+Address VARCHAR(60) NOT NULL,
+Region VARCHAR(20) NOT NULL,
+StaffHeadcount INT NOT NULL,
+AvgWeeklySales DECIMAL(8,2) DEFAULT '0',
+AvgWeeklyCustomers INT DEFAULT '0',
+Profitability INT DEFAULT '1',
+CONSTRAINT Profitab CHECK (Profitability IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)),
+CONSTRAINT ValidOutlet CHECK (OutletID > 3000));
+
+CREATE TABLE Telephone
+(PhoneNumber INT PRIMARY KEY,
+OutletID INT NOT NULL,
+FOREIGN KEY (OutletID) REFERENCES Outlet(OutletID) ON DELETE CASCADE);
+
+CREATE TABLE `Order`
+(OrderID INT NOT NULL PRIMARY KEY,
+MealID VARCHAR(4) NOT NULL,
+CustomerOrdering INT NOT NULL,
+PreparedBy VARCHAR(10) NOT NULL,
+IsDeliveredBy VARCHAR(10) NOT NULL,
+CONSTRAINT CustomerOrderingIsValid CHECK (CustomerOrdering > 1000),
+FOREIGN KEY(MealID) REFERENCES Menu(MealID) ON DELETE CASCADE);
+
+CREATE TABLE Non_Customer_Facing
+(StaffID VARCHAR(10) NOT NULL PRIMARY KEY,
+EmployedBy INT DEFAULT '0',
+FirstName VARCHAR(30) NOT NULL,
+LastName VARCHAR(30) NOT NULL,
+PhoneNumber INT DEFAULT '000',
+TypeOfContract VARCHAR(15) NOT NULL,
+CONSTRAINT ListOfContracts CHECK (TypeOfContract IN ('Temp', 'Perm')),
+FOREIGN KEY (EmployedBy) REFERENCES Outlet(OutletID) ON DELETE CASCADE);
+
+CREATE TABLE Non_Driver
+(StaffID VARCHAR(10) NOT NULL PRIMARY KEY,
+EmployedBy INT DEFAULT '0',
+FirstName VARCHAR(30) NOT NULL,
+LastName VARCHAR(30) NOT NULL,
+PhoneNumber INT DEFAULT '000',
+TypeOfContract VARCHAR(15) NOT NULL,
+Role VARCHAR(20) NOT NULL,
+TrainingReceived VARCHAR(1) NOT NULL,
+DateOfTraining DATE NOT NULL DEFAULT '1999-12-31',
+CONSTRAINT ListOfContractsType1 CHECK (TypeOfContract IN ('Temp', 'Perm')),
+FOREIGN KEY (EmployedBy) REFERENCES Outlet(OutletID) ON DELETE CASCADE);
+
+CREATE TABLE Driver
+(StaffID VARCHAR(10) NOT NULL PRIMARY KEY,
+EmployedBy INT DEFAULT '0',
+FirstName VARCHAR(30) NOT NULL,
+LastName VARCHAR(30) NOT NULL,
+PhoneNumber INT DEFAULT '000',
+TypeOfContract VARCHAR(15) NOT NULL,
+Role VARCHAR(20) NOT NULL,
+TrainingReceived VARCHAR(1) NOT NULL,
+DateOfTraining DATE NOT NULL DEFAULT '1999-12-31',
+TypeOfLicence VARCHAR(10) NOT NULL DEFAULT 'B',
+LicenceExpiryDate DATE NOT NULL DEFAULT '1999-12-31',
+CONSTRAINT ListOfContractsType CHECK (TypeOfContract IN ('Temp', 'Perm')),
+FOREIGN KEY (EmployedBy) REFERENCES Outlet(OutletID) ON DELETE CASCADE);
+
+CREATE TABLE Vehicle
+(RegistrationPlate VARCHAR(10) NOT NULL PRIMARY KEY,
+StaffID VARCHAR(10) DEFAULT '9999',
+VehicleType VARCHAR(10) NOT NULL,
+CONSTRAINT TransportType CHECK (VehicleType IN ('Standard', 'Premium')),
+FOREIGN KEY (StaffID) REFERENCES Driver(StaffID) ON DELETE CASCADE); 
+
+CREATE TABLE Payment
+(ReceiptNumber VARCHAR(50) NOT NULL PRIMARY KEY,
+OutletProcessing INT NOT NULL,
+PaymentMethod VARCHAR(15) NOT NULL,
+Amount DECIMAL(10,2) NOT NULL,
+DeliveryMethod  VARCHAR(15) NOT NULL,
+CONSTRAINT Delivery CHECK (DeliveryMethod IN ('Home Delivery', 'Drive Through')),
+FOREIGN KEY (OutletProcessing) REFERENCES Outlet(OutletID) ON DELETE CASCADE);
+
+
+
+
