@@ -1,1 +1,1 @@
-# DB_F3
+SQL academic project
